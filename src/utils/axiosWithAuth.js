@@ -5,7 +5,7 @@ const axiosWithAuth = ()=> {
         headers: {
             authorization: localStorage.getItem('token')
         },
-        baseURL: 'http://localhost:5000/api/articles'
+        baseURL: 'http://localhost:5000/api'
     })
 }
 

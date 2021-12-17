@@ -4,37 +4,38 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { useState } from 'react';
 import axiosWithAuth from '../utils/axiosWithAuth';
+import { useEffect } from 'react/cjs/react.development';
 
 const Login = () => {
         
-        const [error, setError] = useState(null)
+        const [error, setError] = useState('')
         const { push } = useHistory()
 
-        const [user, setUser] = useState({
-                username: '',
-                password: ''
-        })
+        const [username, setUsername] = useState("")
+        const [password, setPassword] = useState("")
 
-        const handleChange = (evt) => {
-            setUser({
-                ...user,
-                credentials: {
-                    ...user,
-                    [evt.target.name]: evt.target.value
-                }
-            })
-        }
-        const submitLogin = (evt) => {
+        useEffect(() => {
+            console.log(error)
+        }, [error])
+
+       
+        const submitLogin = async (evt) => {
             evt.preventDefault()
         
-            axiosWithAuth().post('/login', user)
+            await axiosWithAuth().post('/login', {username, password})
             .then(resp => {
-                localStorage.setItem('token', resp.data.token)
-                push('/View')
+                if (resp.data.token) {
+                    localStorage.setItem('token', resp.data.token)
+                    push('/View')
+                } else {
+                    setError('Credentials are invalid.')
+                }
             })
             .catch(err => {
-                setError(err.resp.data.error)
-            })
+                console.log(err)
+                setError(err.error)
+                }
+            )
     }
 
     return(<ComponentContainer>
@@ -43,22 +44,22 @@ const Login = () => {
             <h2>Please enter your account information.</h2>
                 <form onSubmit={submitLogin}>
                     <Label htmlFor='username'>Username</Label>
-                    <input>
+                    <input
                         type='text'
                         name='username'
                         id='username'
-                        value={user.username}
-                        onChange={handleChange}
-                    </input>
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                    />
                     <Label htmlFor='password'>Password</Label>
-                    <input>
+                    <input
                         type='password'
                         name='password'
                         id='password'
-                        value={user.password}
-                        onChange={handleChange}
-                    </input>
-                    <button onClick={user.login} id='submit'>Log In!</button>
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                    />
+                    <button onClick={submitLogin} id='submit'>Log In!</button>
                 </form>
                 <p id='error'>{error}</p>
         </ModalContainer>

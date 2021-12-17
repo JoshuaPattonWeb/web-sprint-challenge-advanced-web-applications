@@ -22,6 +22,7 @@ const authenticator = (req, res, next) => {
 
 //Get All Articles Endpoint
 api.post('/api/login', (req, res) => {
+  console.log('in login')
   const {username, password, role, token}  = credentials;
 
   if (username === req.body.username && password === req.body.password) {
