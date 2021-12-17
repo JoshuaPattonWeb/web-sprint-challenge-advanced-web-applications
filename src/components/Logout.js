@@ -4,12 +4,12 @@ import axiosWithAuth from '../utils/axiosWithAuth';
 const Logout = (props) => {        
     
     axiosWithAuth().post(`http://localhost:5000/api/logout`)
-    .then(rep => {
-        localStorage.removeItem('token')
-        props.history.push('/login')
+    .then(resp => {
+        localStorage.removeItem('token');
+        props.history.push('/login');
     })
     .catch(err => {
-        console.error(err)
+        console.error(err);
     })
 }
 

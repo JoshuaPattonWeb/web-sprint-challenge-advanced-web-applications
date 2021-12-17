@@ -2,26 +2,24 @@ import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import e from 'express';
 import { useState } from 'react';
+import axiosWithAuth from '../utils/axiosWithAuth';
 
 const Login = () => {
-        const state = {
-            credentials: {
-                username: '',
-                password: ''
-            }
-        }
+        
         const [error, setError] = useState(null)
         const { push } = useHistory()
 
-        const [user, setUser] = useState(state)
+        const [user, setUser] = useState({
+                username: '',
+                password: ''
+        })
 
         const handleChange = (evt) => {
             setUser({
                 ...user,
                 credentials: {
-                    ...user.credentials,
+                    ...user,
                     [evt.target.name]: evt.target.value
                 }
             })
@@ -29,13 +27,13 @@ const Login = () => {
         const submitLogin = (evt) => {
             evt.preventDefault()
         
-            axios().post(`http://localhost:5000/api/login`, user.credentials)
+            axiosWithAuth().post('/login', user)
             .then(resp => {
                 localStorage.setItem('token', resp.data.token)
                 push('/View')
             })
             .catch(err => {
-                setError('Your login information is invalid!')
+                setError(err.resp.data.error)
             })
     }
 
@@ -44,25 +42,25 @@ const Login = () => {
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
                 <form onSubmit={submitLogin}>
+                    <Label htmlFor='username'>Username</Label>
                     <input>
                         type='text'
                         name='username'
                         id='username'
-                        value={user.username}
+                        value={user.credentials.username}
                         onChange={handleChange}
                     </input>
+                    <Label htmlFor='password'>Password</Label>
                     <input>
                         type='password'
                         name='password'
                         id='password'
-                        value={user.password}
+                        value={user.credentials.password}
                         onChange={handleChange}
                     </input>
                     <button onClick={user.login} id='submit'>Log In!</button>
                 </form>
-                {
-                     !error ? <p></p> : <p id='error'>{error}</p>
-                }
+                <p id='error'>{error}</p>
         </ModalContainer>
     </ComponentContainer>)   
 }

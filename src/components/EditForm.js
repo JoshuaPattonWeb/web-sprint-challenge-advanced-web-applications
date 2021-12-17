@@ -1,6 +1,8 @@
-import { handle } from 'express/lib/application';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axiosWithAuth from '../utils/axiosWithAuth';
+import { useEffect } from 'react'
+import axios from 'axios';
 
 const initialArticle = {
     id:"",
@@ -14,6 +16,16 @@ const EditForm = (props)=> {
     const [article, setArticle]  = useState(initialArticle);
     const {handleEdit, handleEditCancel, editId} = props;
 
+    useEffect(() => {
+        axiosWithAuth().get(`/articles/${editId}`)
+        .then(resp => {
+            setArticle(resp.data)
+        })
+        .catch(err => {
+            console.error(err)
+        })
+    }, [])
+
     const handleChange = (e)=> {
         setArticle({
             ...article,
@@ -24,6 +36,7 @@ const EditForm = (props)=> {
     const handleSubmit = (e) => {
         e.preventDefault();
         handleEdit(article);
+        handleEditCancel();
     }
 
 
@@ -32,16 +45,16 @@ const EditForm = (props)=> {
         handleEditCancel();
     }
 
-    handleCancel(
-        axios.put(`http://localhost:5000/api/articles/${editId}`, item)
-        .then(resp => {
-            props.setArticle(resp.data)
-            props.history.push(`articles/${editId}`)
-        })
-        .catch(err => {
-            console.error(err)
-        })
-    )
+    // handleCancel(
+    //     axios.put(`http://localhost:5000/api/articles/${editId}`, item)
+    //     .then(resp => {
+    //         props.setArticle(resp.data)
+    //         props.history.push(`articles/${editId}`)
+    //     })
+    //     .catch(err => {
+    //         console.error(err)
+    //     })
+    // )
 
     return(<FormContainer onSubmit={handleSubmit}>
         <h3>Edit Article</h3>
