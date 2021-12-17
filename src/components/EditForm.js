@@ -1,3 +1,4 @@
+import { handle } from 'express/lib/application';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -30,6 +31,17 @@ const EditForm = (props)=> {
         e.preventDefault();
         handleEditCancel();
     }
+
+    handleCancel(
+        axios.put(`http://localhost:5000/api/articles/${editId}`, item)
+        .then(resp => {
+            props.setArticle(resp.data)
+            props.history.push(`articles/${editId}`)
+        })
+        .catch(err => {
+            console.error(err)
+        })
+    )
 
     return(<FormContainer onSubmit={handleSubmit}>
         <h3>Edit Article</h3>

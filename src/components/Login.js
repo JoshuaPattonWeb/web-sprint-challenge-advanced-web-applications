@@ -1,14 +1,70 @@
 import React from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+import e from 'express';
+import { useState } from 'react';
 
 const Login = () => {
-    
+        const state = {
+            credentials: {
+                username: '',
+                password: ''
+            }
+        }
+        const [error, setError] = useState(null)
+        const { push } = useHistory()
+
+        const [user, setUser] = useState(state)
+
+        const handleChange = (evt) => {
+            setUser({
+                ...user,
+                credentials: {
+                    ...user.credentials,
+                    [evt.target.name]: evt.target.value
+                }
+            })
+        }
+        const submitLogin = (evt) => {
+            evt.preventDefault()
+        
+            axios().post(`http://localhost:5000/api/login`, user.credentials)
+            .then(resp => {
+                localStorage.setItem('token', resp.data.token)
+                push('/View')
+            })
+            .catch(err => {
+                setError('Your login information is invalid!')
+            })
+    }
+
     return(<ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
+                <form onSubmit={submitLogin}>
+                    <input>
+                        type='text'
+                        name='username'
+                        id='username'
+                        value={user.username}
+                        onChange={handleChange}
+                    </input>
+                    <input>
+                        type='password'
+                        name='password'
+                        id='password'
+                        value={user.password}
+                        onChange={handleChange}
+                    </input>
+                    <button onClick={user.login} id='submit'>Log In!</button>
+                </form>
+                {
+                     !error ? <p></p> : <p id='error'>{error}</p>
+                }
         </ModalContainer>
-    </ComponentContainer>);
+    </ComponentContainer>)   
 }
 
 export default Login;
