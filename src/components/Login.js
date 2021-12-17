@@ -47,7 +47,7 @@ const Login = () => {
                         type='text'
                         name='username'
                         id='username'
-                        value={user.credentials.username}
+                        value={user.username}
                         onChange={handleChange}
                     </input>
                     <Label htmlFor='password'>Password</Label>
@@ -55,7 +55,7 @@ const Login = () => {
                         type='password'
                         name='password'
                         id='password'
-                        value={user.credentials.password}
+                        value={user.password}
                         onChange={handleChange}
                     </input>
                     <button onClick={user.login} id='submit'>Log In!</button>
